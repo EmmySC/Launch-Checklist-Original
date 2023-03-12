@@ -4,7 +4,7 @@ require('isomorphic-fetch');
 //updates: div id="missionTarget" --> doesn't return anything
 function addDestinationInfo(document, name, diameter, star, distance, moons, imageUrl) {
    // Here is the HTML formatting for our mission target div.
-   missionTarget = document.getElementById("missionTarget");
+   const missionTarget = document.getElementById("missionTarget");
    missionTarget.innerHTML = `
         <h2>MissionDestination</h2>
            <ol>
@@ -40,7 +40,7 @@ function formSubmission(document, list, pilot, copilot, fuelLevel, cargoLevel) {
    let cargoStatus = document.getElementById("cargoStatus"); 
    let launchStatus = document.getElementById("launchStatus"); //h2
 
-//updates: div id="launchStatusCheck" based on test senarios//
+///updates: div id="launchStatusCheck" based on test senarios///
 
     //if fuelLevel too low (less than 10,000L), change h2 id="launchStatus" to "Shuttle not ready for launch" & h2.style.color = "red"
     if (fuelLevel <= 10000) {
@@ -104,8 +104,8 @@ async function myFetch() {
 
 //returns a randomly selected planet
 function pickPlanet(planets) {
-    let randomPlanetIndex = Math.floor(Math.random() * planets.length);
-    let selectedPlanet = planets[randomPlanetIndex];
+    let planetIndex = Math.floor(Math.random() * planets.length);
+    let selectedPlanet = planets[planetIndex];
     return selectedPlanet;
 }
 

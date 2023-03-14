@@ -52,18 +52,25 @@ function formSubmission(document, list, pilot, copilot, fuelLevel, cargoLevel) {
         list.style.visibility = "hidden"; 
         alert("All fields are required before submiting!");
     }
-    else if (validateInput(pilot) === "Is a Number" || validateInput(copilot) === "Is a Number") {
-        list.style.visibility = "hidden"; 
-        alert("Enter only letters for the Pilot and Co-Pilot fields.");
-    }
-    else if (validateInput(fuelLevel) === "Not a Number" || validateInput(cargoLevel) === "Not a Number") {
-        list.style.visibility = "hidden"; 
-        alert("Enter only numbers for the Fuel Level and Cargo Mass fields.");
-    } 
-    // else {
+    // else if (validateInput(pilot) === "Is a Number" || validateInput(copilot) === "Is a Number") {
     //     list.style.visibility = "hidden"; 
-    //     launchStatus = launchStatusCheck.innerHTML
+    //     alert("Enter only letters for the Pilot and Co-Pilot fields.");
     // }
+    // else if (validateInput(fuelLevel) === "Not a Number" || validateInput(cargoLevel) === "Not a Number") {
+    //     list.style.visibility = "hidden"; 
+    //     alert("Enter only numbers for the Fuel Level and Cargo Mass fields.");
+    // } 
+    else if (validateInput(pilot) === "Is a Number" || validateInput(copilot) === "Is a Number" || validateInput(fuelLevel) === "Not a Number" || validateInput(cargoLevel) === "Not a Number" ) {
+        alert("Make sure to enter valid information for each field!");
+    }
+    //user error response
+    else {
+        list.style.visibility = "hidden"; 
+    //     alert("")
+        let launchStatus = document.getElementById("launchStatus"); //h2 id="launchStatus"
+    //  launchStatus = launchStatusCheck.innerHTML
+        launchStatus.innerHTML = "Shuttle Is Not Ready For Launch";
+    }
 
  ///updates: div id="launchStatusCheck" based on test senarios///
 
@@ -82,8 +89,8 @@ function formSubmission(document, list, pilot, copilot, fuelLevel, cargoLevel) {
         faultyItems.style.visibility = "visible";
         pilotStatus.innerHTML = `Pilot ${pilot} is ready for launch`;
         copilotStatus.innerHTML = `Co-pilot ${copilot} is ready for launch`;
-        fuelStatus.innerHTML = "Fuel level is too low for launch"
-        launchStatus.innerHTML = "Shuttle Is Not Ready For Launch"
+        fuelStatus.innerHTML = "Fuel level is too low for launch";
+        launchStatus.innerHTML = "Shuttle Is Not Ready For Launch";
         launchStatus.style.color = "red"; //h2.style.color = "red"
     }
     
@@ -92,33 +99,49 @@ function formSubmission(document, list, pilot, copilot, fuelLevel, cargoLevel) {
         faultyItems.style.visibility = "visible"; //list.style.visibility = "visible"
         pilotStatus.innerHTML = `Pilot ${pilot} is ready for launch`;
         copilotStatus.innerHTML = `Co-pilot ${copilot} is ready for launch`;
-        cargoStatus.innerHTML = "Cargo mass is too heavy for launch" //cargoLevel
+        cargoStatus.innerHTML = "Cargo mass is too heavy for launch"; //cargoLevel
         launchStatus.innerHTML = "Shuttle Is Not Ready For Launch"; //h2.textContent = "Shuttle not ready for launch"
         launchStatus.style.color = "red";  //h2.style.color = "red"
     //otherwise, "Cargo mass low enough for launch", set h2 id="launchStatus" to "Shuttle is ready for launch" & h2.style.color = "green"
     } 
 
     //default: shuttle has high enough fuel and low enough mass to launch --> "Shuttle is ready for launch"
-    else { //if (fuelLevel > 10000 && cargoLevel < 10000) { //not >= && <=
-        faultyItems.style.visibility = "visible"  //list.style.visibility = "hidden"
+    else if (fuelLevel > 10000 && cargoLevel < 10000) { //not >= && <=
+        faultyItems.style.visibility = "visible";  //list.style.visibility = "hidden"
         pilotStatus.innerHTML = `Pilot ${pilot} is ready for launch`;
         copilotStatus.innerHTML = `Co-pilot ${copilot} is ready for launch`;
-        fuelStatus.innerHTML = "Fuel level is high enough for launch" //fuelLevel
-        cargoStatus.innerHTML = "Cargo mass is low enough for launch" //cargoLevel
-        launchStatus.innerHTML = "Shuttle Is Ready For Launch" //h2
+        fuelStatus.innerHTML = "Fuel level is high enough for launch"; //fuelLevel
+        cargoStatus.innerHTML = "Cargo mass is low enough for launch"; //cargoLevel
+        launchStatus.innerHTML = "Shuttle Is Ready For Launch"; //h2
         launchStatus.style.color = "green"; //h2
+    }
+
+    else {
+        faultyItems.style.visibility = "hidden";
+        // pilotStatus.innerHTML = `Pilot ${pilot} is ready for launch`;
+        // copilotStatus.innerHTML = `Co-pilot ${copilot} is ready for launch`;
+        // cargoStatus.innerHTML = "Cargo mass low enough for launch";
+        launchStatus.innerHTML = "Shuttle Is Not Ready For Launch";
+        launchStatus.style.color = "red";  //h2.style.color
     }
         
 } //end of formSubmission
 
 //gets json planet response data //how to handle broken promise? --> request sent, no response w/ data returned
 async function myFetch() {
-    //planetsReturned = await fetch().then(function(response) 
-    let planetsReturned = await fetch("https://handlers.education.launchcode.org/static/planets.json");
-    const data = await planetsReturned.json();
-    console.log(data);
-    return data;
-    //return planetsReturned;
+    let planetsReturned;
+    planetsReturned = await fetch("https://handlers.education.launchcode.org/static/planets.json")
+    .then(function(response) {
+        if (response.status >= 400) { //error code: 400s and 500s ??
+            throw new Error ("Error: bad fetch response");
+        }
+        else {
+            let data = response.json();
+            console.log(data);
+            return data;
+        }
+    });
+    return planetsReturned;
 }
 
 //returns a randomly selected planet
